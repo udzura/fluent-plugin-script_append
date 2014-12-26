@@ -25,7 +25,7 @@ Input:
 ```json
 {
   "one" : 1,
-  "twe" : 2
+  "two" : 2
 }
 ```
 
@@ -34,7 +34,7 @@ Then get emitted:
 ```json
 {
   "one" : 1,
-  "twe" : 2,
+  "two" : 2,
   "three" : 3
 }
 ```
