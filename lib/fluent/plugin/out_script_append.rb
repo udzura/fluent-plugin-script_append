@@ -23,7 +23,7 @@ class Fluent::ScriptAppendOutput < Fluent::Output
     end
 
     eval <<-RUBY
-      def @script_runner.run(#{@data_var_name})
+      def @script_runner.run(#{@record_var_name})
         #{@run_script}
       end
     RUBY
