@@ -1,26 +1,43 @@
 # Fluent::Plugin::ScriptAppend
 
-TODO: Write a gem description
+A fluent plugin to add script-run result to existing json data
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Install it yourself as:
 
-```ruby
-gem 'fluent-plugin-script_append'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install fluent-plugin-script_append
+    $ fluent-gem install fluent-plugin-script_append
 
 ## Usage
 
-TODO: Write usage instructions here
+```conf
+<match access.foo>
+  type script_append
+  # currently only ruby supported
+  language ruby
+  run_script record['one'].to_i + record['two'].to_i
+  key three
+</match>
+```
+
+Input:
+
+```json
+{
+  "one" : 1,
+  "twe" : 2
+}
+```
+
+Then get emitted:
+
+```json
+{
+  "one" : 1,
+  "twe" : 2,
+  "three" : 3
+}
+```
 
 ## Contributing
 
