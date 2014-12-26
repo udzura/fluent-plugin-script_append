@@ -5,7 +5,7 @@ class Fluent::ScriptAppendOutput < Fluent::Output
   config_param :key,             :string, :default => nil
   config_param :language,        :string, :default => 'ruby'
   config_param :run_script,      :string, :default => ''
-  config_param :record_var_name, :string, :default => 'redord'
+  config_param :record_var_name, :string, :default => 'record'
   config_param :new_tag,         :string, :default => nil
   config_param :prefix,          :string, :default => nil
 
@@ -13,7 +13,7 @@ class Fluent::ScriptAppendOutput < Fluent::Output
     super
     ensure_param_set!(:key, @key)
     ensure_param_set!(:run_script, @run_script)
-    ensure_param_set!("new_tag or prefix", @new_tag or @prefix)
+    ensure_param_set!("new_tag or prefix", (@new_tag or @prefix))
 
     @script_runner = Object.new
 
