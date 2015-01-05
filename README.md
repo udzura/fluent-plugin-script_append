@@ -41,6 +41,17 @@ Then get emitted:
 }
 ```
 
+## Parameters
+
+* `key`, A key for added record to use in json. Required
+* `language`, A language of script, default to ruby, available: `ruby, sh(ell)`
+    * In `language ruby`, the record to add is the value of specified expression
+    * In `language shell`, the record to add is the stdout of specified shell script
+* `run_script`, A script for generating data. Required
+* `record_var_name`, A variable name for original json data in `ruby` script. Default to `record`
+* `new_tag`, A tag name to use in new emissions
+* `prefix`, A tag prefix to add original tag in new emissions. `new_tag` or `prefix` is required
+
 ## Contributing
 
 1. Fork it ( https://github.com/[my-github-username]/fluent-plugin-script_append/fork )
