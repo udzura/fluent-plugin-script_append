@@ -16,6 +16,13 @@ class ScriptAppendOutputTest < Test::Unit::TestCase
     new_tag test.result
   FLUENTD
 
+  def config_with_run_script(script)
+    CONFIG_DEFAULT.sub(
+      /^ +run_script.*$/,
+      "run_script #{script}"
+    )
+  end
+
   test 'configure' do
     d = create_driver CONFIG_DEFAULT
     assert_equal "sample", d.instance.config['key']
@@ -49,7 +56,7 @@ class ScriptAppendOutputTest < Test::Unit::TestCase
 
     assert_nothing_raised do
       create_driver <<-FLUENTD
-        key invakid
+        key invalid
         run_script "Hello, World"
         new_tag test.result
       FLUENTD
@@ -57,13 +64,6 @@ class ScriptAppendOutputTest < Test::Unit::TestCase
   end
 
   test 'appends a result' do
-    config = <<-FLUENTD
-      key sample
-      language ruby
-      run_script "Hello, World"
-      new_tag test.result
-    FLUENTD
-
     d = create_driver CONFIG_DEFAULT, 'input.access'
     d.run do
       d.emit({'domain' => 'www.google.com', 'path' => '/foo/bar?key=value', 'agent' => 'Googlebot', 'response_time' => 1000000})
@@ -72,5 +72,39 @@ class ScriptAppendOutputTest < Test::Unit::TestCase
     emits = d.emits
     assert_equal 'test.result', emits[0][0]
     assert_equal 'Hello, World', emits[0][2]['sample']
+  end
+
+  test 'appends a result using record' do
+    d = create_driver config_with_run_script("record['one'].to_i + record['two'].to_i")
+    d.run do
+      d.emit({'one' => 1, 'two' => 2})
+    end
+
+    emits = d.emits
+    assert_equal 'test.result', emits[0][0]
+    assert_equal 3, emits[0][2]['sample']
+  end
+
+  test 'appends with prefix' do
+    d = create_driver CONFIG_DEFAULT.sub(/new_tag.*$/m, 'prefix the_prefix'), 'with_suffix'
+    d.run do
+      d.emit({'domain' => 'www.google.com', 'path' => '/foo/bar?key=value', 'agent' => 'Googlebot', 'response_time' => 1000000})
+    end
+
+    emits = d.emits
+    assert_equal 'the_prefix.with_suffix', emits[0][0]
+    assert_equal 'Hello, World', emits[0][2]['sample']
+  end
+
+  test 'customizes variable name in script' do
+    d = create_driver \
+      config_with_run_script("data['one'].to_i + data['two'].to_i * 10").
+      sub(/\z/, "\n record_var_name data")
+    d.run do
+      d.emit({'one' => 1, 'two' => 2})
+    end
+
+    emits = d.emits
+    assert_equal 21, emits[0][2]['sample']
   end
 end
