@@ -2,6 +2,8 @@
 
 A fluent plugin to add script-run result to existing json data
 
+[![wercker status](https://app.wercker.com/status/56186aa7c9f166ffea49aba97971e40d/m "wercker status")](https://app.wercker.com/project/bykey/56186aa7c9f166ffea49aba97971e40d)
+
 ## Installation
 
 Install it yourself as:
