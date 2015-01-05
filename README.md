@@ -52,6 +52,10 @@ Then get emitted:
 * `new_tag`, A tag name to use in new emissions
 * `prefix`, A tag prefix to add original tag in new emissions. `new_tag` or `prefix` is required
 
+## See also
+
+* https://github.com/ephemeralsnow/fluent-plugin-eval-filter
+
 ## Contributing
 
 1. Fork it ( https://github.com/[my-github-username]/fluent-plugin-script_append/fork )
