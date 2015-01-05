@@ -107,4 +107,17 @@ class ScriptAppendOutputTest < Test::Unit::TestCase
     emits = d.emits
     assert_equal 21, emits[0][2]['sample']
   end
+
+  test 'runs shell via Kernel#`' do
+    d = create_driver \
+      config_with_run_script(%{echo "Hello world via shell"}).
+      sub(/language.*$/, "language shell")
+
+    d.run do
+      d.emit({'domain' => 'www.google.com', 'path' => '/foo/bar?key=value', 'agent' => 'Googlebot', 'response_time' => 1000000})
+    end
+
+    emits = d.emits
+    assert_equal "Hello world via shell\n", emits[0][2]['sample']
+  end
 end

@@ -9,6 +9,8 @@ class Fluent::ScriptAppendOutput < Fluent::Output
   config_param :new_tag,         :string, :default => nil
   config_param :prefix,          :string, :default => nil
 
+  SUPPORTED_SCRIPT_NAME = %w(ruby sh shell)
+
   def configure(conf)
     super
     ensure_param_set!(:key, @key)
@@ -17,16 +19,26 @@ class Fluent::ScriptAppendOutput < Fluent::Output
 
     @script_runner = Object.new
 
-    # TODO multiple script language support
-    if @language != 'ruby'
+    unless SUPPORTED_SCRIPT_NAME.include? @language
       warn "Plugin out_script_append would not accept 'language' value other than 'ruby'. Ignoring."
+      @language = 'ruby'
     end
 
-    eval <<-RUBY
-      def @script_runner.run(#{@record_var_name})
-        #{@run_script}
-      end
-    RUBY
+    case @language
+    when 'ruby'
+      eval <<-RUBY
+        def @script_runner.run(#{@record_var_name})
+          #{@run_script}
+        end
+      RUBY
+    when 'sh', 'shell'
+      script = @run_script.gsub(/`/, '\\\`')
+      eval <<-RUBY
+        def @script_runner.run(*)
+          `#{@run_script}`
+        end
+      RUBY
+    end
   end
 
   def emit(tag, event_stream, chain)
