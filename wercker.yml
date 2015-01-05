@@ -1,0 +1,16 @@
+box: wercker/rvm
+build:
+    steps:
+        - rvm-use:
+            version: ruby-2.1.5
+        - bundle-install
+        - script:
+            name: run test-unit
+            code: bundle exec rake test
+
+        - rvm-use:
+            version: ruby-2.0.0-p598
+        - bundle-install
+        - script:
+            name: run test-unit
+            code: bundle exec rake test
