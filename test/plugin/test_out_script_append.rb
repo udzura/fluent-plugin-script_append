@@ -1,7 +1,7 @@
 require 'helper'
 
 class ScriptAppendOutputTest < Test::Unit::TestCase
-  def create_driver(conf ,tag='test')
+  def create_driver(conf, tag='test')
     Fluent::Test::OutputTestDriver.new(Fluent::ScriptAppendOutput, tag).configure(conf)
   end
 
@@ -20,6 +20,40 @@ class ScriptAppendOutputTest < Test::Unit::TestCase
     d = create_driver CONFIG_DEFAULT
     assert_equal "sample", d.instance.config['key']
     assert_equal '"Hello, World"', d.instance.config['run_script']
+  end
+
+  test 'invalid config' do
+    assert_raise Fluent::ConfigError do
+      create_driver <<-FLUENTD
+        language ruby
+        run_script "Hello, World"
+        new_tag test.result
+      FLUENTD
+    end
+
+    assert_raise Fluent::ConfigError do
+      create_driver <<-FLUENTD
+        key invakid
+        language ruby
+        new_tag test.result
+      FLUENTD
+    end
+
+    assert_raise Fluent::ConfigError do
+      create_driver <<-FLUENTD
+        key invakid
+        language ruby
+        run_script "Hello, World"
+      FLUENTD
+    end
+
+    assert_nothing_raised do
+      create_driver <<-FLUENTD
+        key invakid
+        run_script "Hello, World"
+        new_tag test.result
+      FLUENTD
+    end
   end
 
   test 'appends a result' do

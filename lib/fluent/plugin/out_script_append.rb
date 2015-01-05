@@ -4,7 +4,7 @@ class Fluent::ScriptAppendOutput < Fluent::Output
 
   config_param :key,             :string, :default => nil
   config_param :language,        :string, :default => 'ruby'
-  config_param :run_script,      :string, :default => ''
+  config_param :run_script,      :string, :default => nil
   config_param :record_var_name, :string, :default => 'record'
   config_param :new_tag,         :string, :default => nil
   config_param :prefix,          :string, :default => nil
@@ -49,7 +49,7 @@ class Fluent::ScriptAppendOutput < Fluent::Output
 
   def ensure_param_set!(name, value)
     unless value
-      raise "#{name} must be set"
+      raise Fluent::ConfigError, "#{name} must be set"
     end
   end
 
